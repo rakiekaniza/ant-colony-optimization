@@ -8,7 +8,7 @@ class AncitiesColony:
     rho = 0.8
     alpha = 2
     beta = 2
-    Q = 5
+    Q = 1
             
     s = 0
     nc = 1
