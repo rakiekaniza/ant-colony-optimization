@@ -113,7 +113,7 @@ if __name__ == '__main__':
     
     np.set_printoptions(threshold=np.nan)
     
-    data = np.loadtxt('Swarm052.txt')
+    data = np.loadtxt('data/Swarm202.txt')
     
-    aco = AncitiesColony(data, len(data), 5, 5)
+    aco = AncitiesColony(data, len(data), 20, 5)
     aco.searchroute()
