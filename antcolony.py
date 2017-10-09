@@ -2,32 +2,33 @@ import numpy as np
 import random
 import math
 import sys
-import time
 
-class AncitiesColony:
+class AntColony:
     rho = 0.8
     alpha = 2
     beta = 2
     Q = 1
             
     s = 0
-    nc = 1
-    def __init__(self, data, ncities, nants, ncmax):
-        self.data = data
+    nc = 0
+    def __init__(self, data, nants, ncmax):
+        np.set_printoptions(threshold=np.nan)
+        
+        self.data = np.loadtxt(data)
             
         self.ncmax = ncmax
         self.nants = nants+1
-        self.ncities = ncities
+        self.ncities = len(self.data)
         
         self.ants = np.empty((self.nants, 1), dtype=np.int32)
         self.lengthk = np.zeros((self.nants, 1))
-        self.tabulist = np.zeros((self.nants, ncities), dtype=np.int32) 
+        self.tabulist = np.zeros((self.nants, self.ncities), dtype=np.int32) 
         self.pheromones = np.zeros((self.ncities, self.ncities))
         self.pheromones.fill(1)
         self.deltapheromones = np.zeros((self.ncities, self.ncities))
     
         self.shortestlength = sys.maxsize
-        self.shortestroute = np.zeros((ncities), dtype = np.int32)
+        self.shortestroute = np.zeros((self.ncities), dtype = np.int32)
         
     def distance(self, a, b):
         return math.sqrt(pow(self.data[a][1]-self.data[b][1], 2)+pow(self.data[a][2]-self.data[b][2], 2))
@@ -105,15 +106,4 @@ class AncitiesColony:
             else:
                 print('Shortest route \t\t= ', self.shortestroute)
                 print('Length of the route \t= ', self.shortestlength)
-                print("--- %s seconds ---" % (time.time() - start_time))
                 doloop = False
-
-if __name__ == '__main__':
-    start_time = time.time()
-    
-    np.set_printoptions(threshold=np.nan)
-    
-    data = np.loadtxt('data/Swarm016.txt')
-    
-    aco = AncitiesColony(data, len(data), 1, 5)
-    aco.searchroute()
