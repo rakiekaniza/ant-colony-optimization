@@ -50,14 +50,14 @@ class AncitiesColony:
     def findnewcity(self, i, citiestovisit):
         divisor = 0
         dividend = np.zeros((len(citiestovisit)))
+        cumulativeprob = 0
         for x in range(0, len(citiestovisit)):
-            np.put(dividend, x, pow(self.pheromones[i][citiestovisit[x]-1], self.alpha)*pow((1/self.distance(i, citiestovisit[x]-1)), self.beta))
+            cumulativeprob += pow(self.pheromones[i][citiestovisit[x]-1], self.alpha)*pow((1/self.distance(i, citiestovisit[x]-1)), self.beta)
+            np.put(dividend, x, cumulativeprob)
             divisor += pow(self.pheromones[i][citiestovisit[x]-1], self.alpha)*pow((1/self.distance(i, citiestovisit[x]-1)), self.beta)
         dividend = dividend/divisor
-        return citiestovisit[self.findnearest(dividend, random.random())]
-    
-    def findnearest(self, citiestovisit, randnumber):
-        return (np.abs(citiestovisit-randnumber)).argmin()
+        randnumber = random.random()
+        return citiestovisit[(np.abs(dividend-randnumber)).argmin()]
     
     def antsroute(self, k, firstcity):
         citiestovisit = [n for n in range(1, self.ncities+1) if n != firstcity]
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     
     np.set_printoptions(threshold=np.nan)
     
-    data = np.loadtxt('data/Swarm202.txt')
+    data = np.loadtxt('data/Swarm016.txt')
     
-    aco = AncitiesColony(data, len(data), 20, 5)
+    aco = AncitiesColony(data, len(data), 1, 5)
     aco.searchroute()
