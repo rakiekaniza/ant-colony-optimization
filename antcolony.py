@@ -9,7 +9,7 @@ class AntColony:
     rho = 0.7
     alpha = 2
     beta = 3
-    Q = 1
+    Q = 10000
             
     s = 0
     nc = 0
@@ -85,7 +85,7 @@ class AntColony:
         visited.append(citiestovisit[0])
         return visited
     
-    #menggunakan 
+    #digunakan untuk memulai proses
     def searchroute(self):
         #meletakkan semut k dikota awal
         for k in range (0, self.nants):
