@@ -6,10 +6,10 @@ import sys
 class AntColony:
     #rho = penguapan, alpha = pangkat dari intensitas phereomone dalam probabilitas
     #beta = pangkat dari visibilitas dalam probabilitas, Q = konstanta
-    rho = 0.8
-    alpha = 1
-    beta = 2
-    Q = 1
+    rho = 0.7
+    alpha = 3
+    beta = 3
+    Q = 2
             
     s = 0
     nc = 0
@@ -22,7 +22,7 @@ class AntColony:
             
         self.ncmax = ncmax
         self.nants = nants+1
-        self.ncities = len(self.data)
+        self.ncities = len(data)
         
         self.ants = np.empty((self.nants, 1), dtype=np.int32)
         self.length = np.zeros((self.nants, 1))
@@ -124,7 +124,5 @@ class AntColony:
             self.deltapheromones = np.zeros((self.ncities, self.ncities))
             
             if (self.nc >= self.ncmax):
-                print('Shortest route \t\t= ', self.shortestroute)
-                print('Length of the route \t= ', self.shortestlength)
                 doloop = False
-                return self.tabulist
+                return self.tabulist, self.shortestroute, self.shortestlength

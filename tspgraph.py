@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class TSPGraph:
-    def __init__(self, paths, points, nants, ncmax=1):
+    def __init__(self, paths, points, nants, ncmax):
 #        plt.subplots_adjust(left=0.1, bottom=0.25)
         
         self.paths = paths
@@ -13,7 +13,6 @@ class TSPGraph:
         
         self.x = []
         self.y = []
-        
         
         for i in range (0, len(self.points)):
             self.x.append(self.points[i][0])
