@@ -1,8 +1,22 @@
 import antcolony
 import time
+import tspgraph
+import numpy as np
 
 if __name__ == '__main__':
     start_time = time.time()
-    aco = antcolony.AntColony('data/Swarm016.txt', 8, 10)
-    aco.searchroute()
+    data = np.loadtxt('data/Swarm202.txt')
+    ncmax = 100
+    nants = 25
+    
+    aco = antcolony.AntColony(data, nants, ncmax)
+    
+    points = []
+    
+    tabulist = aco.searchroute()
+    
+    for i in range(0, len(data)):
+        points.append((data[i][1], data[i][2]))
+    graph = tspgraph.TSPGraph(tabulist, points, nants, ncmax)
+                              
     print("--- %s seconds ---" % (time.time() - start_time))

@@ -6,10 +6,10 @@ import sys
 class AntColony:
     #rho = penguapan, alpha = pangkat dari intensitas phereomone dalam probabilitas
     #beta = pangkat dari visibilitas dalam probabilitas, Q = konstanta
-    rho = 0.7
-    alpha = 2
-    beta = 3
-    Q = 10000
+    rho = 0.8
+    alpha = 1
+    beta = 2
+    Q = 1
             
     s = 0
     nc = 0
@@ -18,15 +18,15 @@ class AntColony:
     def __init__(self, data, nants, ncmax):
         np.set_printoptions(threshold=np.nan)
         
-        self.data = np.loadtxt(data)
+        self.data = data
             
         self.ncmax = ncmax
         self.nants = nants+1
         self.ncities = len(self.data)
         
         self.ants = np.empty((self.nants, 1), dtype=np.int32)
-        self.lengthk = np.zeros((self.nants, 1))
-        self.tabulist = np.zeros((self.nants, self.ncities), dtype=np.int32) 
+        self.length = np.zeros((self.nants, 1))
+        self.tabulist = np.zeros((self.ncmax, self.nants, self.ncities), dtype=np.int32) 
         self.pheromones = np.zeros((self.ncities, self.ncities))
         self.pheromones.fill(1)
         self.deltapheromones = np.zeros((self.ncities, self.ncities))
@@ -42,17 +42,17 @@ class AntColony:
     def deltapheromonesk(self, i, j, k):
         useij = False
         for x in range(0, self.ncities-1): 
-            if((self.tabulist[k][x] == i or self.tabulist[k][x] == j)
-               and ((self.tabulist[k][x-1] == i or self.tabulist[k][x-1] == j)
-               or (self.tabulist[k][x+1] == i or self.tabulist[k][x+1] == j))): useij = True
-        return self.Q/self.calculatelength(k) if useij else 0
+            if((self.tabulist[self.nc][k][x] == i or self.tabulist[self.nc][k][x] == j)
+               and ((self.tabulist[self.nc][k][x-1] == i or self.tabulist[self.nc][k][x-1] == j)
+               or (self.tabulist[self.nc][k][x+1] == i or self.tabulist[self.nc][k][x+1] == j))): useij = True
+        return self.Q/self.length[k] if useij else 0
     
     #menghitung panjang rute semut k
     def calculatelength(self, k):
         Lk = 0
         for x in range(0, self.ncities-2): 
-            Lk += self.distance(self.tabulist[k][x]-1, self.tabulist[k][x+1]-1)
-        Lk += self.distance(self.tabulist[k][0]-1, self.tabulist[k][self.ncities-1]-1)
+            Lk += self.distance(self.tabulist[self.nc][k][x]-1, self.tabulist[self.nc][k][x+1]-1)
+        Lk += self.distance(self.tabulist[self.nc][k][0]-1, self.tabulist[self.nc][k][self.ncities-1]-1)
         return Lk
     
     #mencari kota baru menggunakan rumus probabilitas
@@ -96,14 +96,14 @@ class AntColony:
         while doloop:
             #menggunakan fungsi antsroute untuk mengisi tabulist
             for k in range(0, self.nants):
-                self.tabulist[k] = self.antsroute(k, self.ants[k][0])
+                self.tabulist[self.nc][k] = self.antsroute(k, self.ants[k][0])
                 
             #mencari rute terpendek yang dilalui oleh semua semut
             for k in range(0, self.nants):
-                np.put(self.lengthk[k], [0], self.calculatelength(k-1))
-                if(self.shortestlength>self.lengthk[k]):
-                    self.shortestlength = self.lengthk[k]
-                    self.shortestroute = self.tabulist[k]
+                np.put(self.length[k], [0], self.calculatelength(k-1))
+                if(self.shortestlength>self.length[k]):
+                    self.shortestlength = self.length[k]
+                    self.shortestroute = self.tabulist[self.nc][k]
                 
             #menghitung delta peheromone dari setiap jalur
             for k in range (0, self.nants): 
@@ -123,10 +123,8 @@ class AntColony:
             #mengosongkan delta pheromone
             self.deltapheromones = np.zeros((self.ncities, self.ncities))
             
-            if (self.nc < self.ncmax):
-                self.tabulist = np.zeros((self.nants, self.ncities), dtype=np.int32) 
-            else:
+            if (self.nc >= self.ncmax):
                 print('Shortest route \t\t= ', self.shortestroute)
                 print('Length of the route \t= ', self.shortestlength)
                 doloop = False
-#                return self.tabulist
+                return self.tabulist
