@@ -5,9 +5,9 @@ import numpy as np
 
 if __name__ == '__main__':
     start_time = time.time()
-    data = np.loadtxt('data/Swarm052.txt')
-    ncmax = 50
-    nants = 8
+    data = np.loadtxt('data/Swarm202.txt')
+    ncmax = 40
+    nants = 40
     
     aco = antcolony.AntColony(data, nants, ncmax)
     

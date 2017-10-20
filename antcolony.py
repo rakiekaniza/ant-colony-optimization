@@ -25,7 +25,7 @@ class AntColony:
         self.ncities = len(data)
         
         self.ants = np.empty((self.nants, 1), dtype=np.int32)
-        self.length = np.zeros((self.nants, 1))
+        self.length = np.zeros((self.nants))
         self.tabulist = np.zeros((self.ncmax, self.nants, self.ncities), dtype=np.int32) 
         self.pheromones = np.zeros((self.ncities, self.ncities))
         self.pheromones.fill(1)
@@ -50,9 +50,20 @@ class AntColony:
     #menghitung panjang rute semut k
     def calculatelength(self, k):
         Lk = 0
-        for x in range(0, self.ncities-2): 
+#        print(self.tabulist[self.nc][k])
+        for x in range(0, self.ncities-1):
             Lk += self.distance(self.tabulist[self.nc][k][x]-1, self.tabulist[self.nc][k][x+1]-1)
+#        print(self.tabulist[self.nc][k][0]-1, self.tabulist[self.nc][k][self.ncities-1]-1)
         Lk += self.distance(self.tabulist[self.nc][k][0]-1, self.tabulist[self.nc][k][self.ncities-1]-1)
+        return Lk
+    
+    def calculatelk(self, antsroute):
+        print(antsroute)
+        Lk = np.zeros((len(antsroute)))
+        for x in range(0, self.ncities-1): 
+            Lk[x] = self.distance(antsroute[x]-1, antsroute[x+1]-1)
+        print(antsroute[0], antsroute[self.ncities-1])
+        Lk[self.ncities-1] = self.distance(antsroute[0]-1, antsroute[self.ncities-1]-1)
         return Lk
     
     #mencari kota baru menggunakan rumus probabilitas
@@ -65,6 +76,7 @@ class AntColony:
             cumulativeprob += pow(self.pheromones[i][citiestovisit[x]-1], self.alpha)*pow((1/self.distance(i, citiestovisit[x]-1)), self.beta)
             np.put(dividend, x, cumulativeprob)
             divisor += pow(self.pheromones[i][citiestovisit[x]-1], self.alpha)*pow((1/self.distance(i, citiestovisit[x]-1)), self.beta)
+#        print(dividend, divisor)s
         dividend = dividend/divisor
         #menggunakan teknik roulette wheel selection
         randnumber = random.random()
@@ -100,7 +112,7 @@ class AntColony:
                 
             #mencari rute terpendek yang dilalui oleh semua semut
             for k in range(0, self.nants):
-                np.put(self.length[k], [0], self.calculatelength(k-1))
+                self.length[k] = self.calculatelength(k)
                 if(self.shortestlength>self.length[k]):
                     self.shortestlength = self.length[k]
                     self.shortestroute = self.tabulist[self.nc][k]
