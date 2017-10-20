@@ -47,7 +47,7 @@ class TSPGraph:
                           color = 'r', length_includes_head = True, width = widtharrow[n][n+1], head_width = 0)
         plt.title('Cycle '+str(self.nc+1))
         plt.draw()
-        plt.pause(0.5)
+        plt.pause(0.25)
                 
     def animateACO(self):
         while(True):
